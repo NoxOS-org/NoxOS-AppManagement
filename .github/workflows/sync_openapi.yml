@@ -6,14 +6,12 @@ on:
       project-name:
         required: true
         type: string
-  push:
-    branches:
-      - main
 
 jobs:
   sync:
-    uses: Nox-OS/github/.github/workflows/sync_openapi.yml@main
-    with:
-      project-name: noxos-app-management
-    secrets:
-      API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync is managed externally
+        run: |
+          echo "Skipping local sync_openapi job."
+          echo "Use the org-level automation once Nox-OS/github reusable workflows are available."

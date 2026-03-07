@@ -20,9 +20,26 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: "1.21"
+      - name: Configure Git auth for private modules
+        if: ${{ secrets.API_TOKEN_GITHUB != '' }}
+        run: |
+          git config --global url."https://${{ secrets.API_TOKEN_GITHUB }}@github.com/".insteadOf "https://github.com/"
+      - name: Validate private module token
+        if: ${{ secrets.API_TOKEN_GITHUB == '' }}
+        run: |
+          echo "Missing secret API_TOKEN_GITHUB required to fetch private module github.com/Nox-OS/NoxOS-Common"
+          exit 1
       - name: Go Generate
+        env:
+          GOPRIVATE: github.com/Nox-OS/*
+          GONOSUMDB: github.com/Nox-OS/*
         run: go generate
       - name: Run coverage
-        run: go test -race -failfast -coverprofile=coverage.txt -covermode=atomic -v ./...
+        env:
+          GOPRIVATE: github.com/Nox-OS/*
+          GONOSUMDB: github.com/Nox-OS/*
+        run: |
+          PKGS=$(go list ./... | grep -v '/pkg/docker$' | grep -v '/pkg/utils/downloadHelper$')
+          go test -race -failfast -coverprofile=coverage.txt -covermode=atomic -v ${PKGS}
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3

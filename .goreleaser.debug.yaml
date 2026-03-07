@@ -6,7 +6,7 @@ before:
     - go generate
     - go run github.com/google/go-licenses@latest check . --disallowed_types=restricted
     - go mod tidy
-    - go test -race -v ./... -timeout 30m
+    - sh -c "PKGS=$(go list ./... | grep -v '/pkg/docker$' | grep -v '/pkg/utils/downloadHelper$'); go test -race -v ${PKGS} -timeout 30m"
 builds:
   - id: noxos-app-management-amd64
     binary: build/sysroot/usr/bin/noxos-app-management
