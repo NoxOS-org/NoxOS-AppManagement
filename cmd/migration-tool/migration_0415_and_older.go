@@ -5,9 +5,9 @@ import (
 	"os"
 	"strings"
 
-	interfaces "github.com/IceWhaleTech/CasaOS-Common"
+	interfaces "github.com/Nox-OS/NoxOS-Common"
 
-	"github.com/IceWhaleTech/CasaOS-AppManagement/pkg/config"
+	"github.com/Nox-OS/NoxOS-AppManagement/pkg/config"
 )
 
 type UrlReplacement struct {
@@ -17,16 +17,16 @@ type UrlReplacement struct {
 
 var replaceUrl = []UrlReplacement{
 	{
-		OldUrl: "https://github.com/IceWhaleTech/_appstore/archive/refs/heads/main.zip",
-		NewUrl: "https://cdn.jsdelivr.net/gh/IceWhaleTech/CasaOS-AppStore@gh-pages/store/main.zip",
+		OldUrl: "https://github.com/Nox-OS/_appstore/archive/refs/heads/main.zip",
+		NewUrl: "https://cdn.jsdelivr.net/gh/Nox-OS/NoxOS-AppStore@gh-pages/store/main.zip",
 	},
 	{
-		OldUrl: "https://casaos.oss-cn-shanghai.aliyuncs.com/IceWhaleTech/_appstore/archive/refs/heads/main.zip",
-		NewUrl: "https://cdn.jsdelivr.net/gh/IceWhaleTech/CasaOS-AppStore@gh-pages/store/main.zip",
+		OldUrl: "https://noxos.oss-cn-shanghai.aliyuncs.com/Nox-OS/_appstore/archive/refs/heads/main.zip",
+		NewUrl: "https://cdn.jsdelivr.net/gh/Nox-OS/NoxOS-AppStore@gh-pages/store/main.zip",
 	},
 	{
-		OldUrl: "https://casaos.app/store/main.zip",
-		NewUrl: "https://cdn.jsdelivr.net/gh/IceWhaleTech/CasaOS-AppStore@gh-pages/store/main.zip",
+		OldUrl: "https://noxos.app/store/main.zip",
+		NewUrl: "https://cdn.jsdelivr.net/gh/Nox-OS/NoxOS-AppStore@gh-pages/store/main.zip",
 	},
 }
 
@@ -50,7 +50,7 @@ func (u *migrationTool0415AndOlder) IsMigrationNeeded() (bool, error) {
 
 	for _, v := range replaceUrl {
 		if strings.Contains(string(content), v.OldUrl) {
-			_logger.Info("Migration is needed for a CasaOS with old app store link.")
+			_logger.Info("Migration is needed for a NoxOS with old app store link.")
 			return true, nil
 		}
 	}
@@ -63,7 +63,7 @@ func (u *migrationTool0415AndOlder) PreMigrate() error {
 
 func (u *migrationTool0415AndOlder) Migrate() error {
 	// replace string in AppManagementConfigFilePath
-	// replace https://github.com/IceWhaleTech/_appstore/archive/refs/heads/main.zip to https://casaos-appstore.github.io/casaos-appstore/linux-all-appstore.zip
+	// replace https://github.com/Nox-OS/_appstore/archive/refs/heads/main.zip to https://noxos-appstore.github.io/noxos-appstore/linux-all-appstore.zip
 	file, err := os.OpenFile(config.AppManagementConfigFilePath, os.O_RDWR, 0644)
 	if err != nil {
 		_logger.Error("failed to open app management config file: %s", err)

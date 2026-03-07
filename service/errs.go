@@ -3,13 +3,13 @@ package service
 import (
 	"fmt"
 
-	"github.com/IceWhaleTech/CasaOS-AppManagement/common"
+	"github.com/Nox-OS/NoxOS-AppManagement/common"
 )
 
 var (
 	ErrComposeAppNotFound                  = fmt.Errorf("compose app not found")
 	ErrComposeAppNotMatch                  = fmt.Errorf("compose app not match")
-	ErrComposeExtensionNameXCasaOSNotFound = fmt.Errorf("extension `%s` not found", common.ComposeExtensionNameXCasaOS)
+	ErrComposeExtensionNameXNoxOSNotFound = fmt.Errorf("extension `%s` not found", common.ComposeExtensionNameXNoxOS)
 	ErrComposeFileNotFound                 = fmt.Errorf("compose file not found")
 	ErrInvalidComposeAppStatus             = fmt.Errorf("invalid compose app status")
 	ErrMainAppNotFound                     = fmt.Errorf("main app not found")

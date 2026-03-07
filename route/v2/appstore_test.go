@@ -5,11 +5,11 @@ import (
 
 	"gotest.tools/v3/assert"
 
-	"github.com/IceWhaleTech/CasaOS-AppManagement/codegen"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/common"
-	v2 "github.com/IceWhaleTech/CasaOS-AppManagement/route/v2"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/service"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
+	"github.com/Nox-OS/NoxOS-AppManagement/codegen"
+	"github.com/Nox-OS/NoxOS-AppManagement/common"
+	v2 "github.com/Nox-OS/NoxOS-AppManagement/route/v2"
+	"github.com/Nox-OS/NoxOS-AppManagement/service"
+	"github.com/Nox-OS/NoxOS-Common/utils/logger"
 	"github.com/compose-spec/compose-go/types"
 )
 
@@ -23,7 +23,7 @@ func TestFilterCatalogByCategory(t *testing.T) {
 
 	catalog["test"] = &service.ComposeApp{
 		Extensions: map[string]interface{}{
-			common.ComposeExtensionNameXCasaOS: map[string]interface{}{
+			common.ComposeExtensionNameXNoxOS: map[string]interface{}{
 				"category": "test",
 			},
 		},
@@ -34,7 +34,7 @@ func TestFilterCatalogByCategory(t *testing.T) {
 
 	catalog["test2"] = &service.ComposeApp{
 		Extensions: map[string]interface{}{
-			common.ComposeExtensionNameXCasaOS: map[string]interface{}{
+			common.ComposeExtensionNameXNoxOS: map[string]interface{}{
 				"category": "test2",
 			},
 		},
@@ -63,8 +63,8 @@ func TestFilterCatalogByAuthorType(t *testing.T) {
 
 	catalog["test"] = &service.ComposeApp{
 		Extensions: map[string]interface{}{
-			common.ComposeExtensionNameXCasaOS: map[string]interface{}{
-				"author": common.ComposeAppAuthorCasaOSTeam,
+			common.ComposeExtensionNameXNoxOS: map[string]interface{}{
+				"author": common.ComposeAppAuthorNoxOSTeam,
 			},
 		},
 	}
@@ -83,7 +83,7 @@ func TestFilterCatalogByAuthorType(t *testing.T) {
 
 	catalog["test2"] = &service.ComposeApp{
 		Extensions: map[string]interface{}{
-			common.ComposeExtensionNameXCasaOS: map[string]interface{}{
+			common.ComposeExtensionNameXNoxOS: map[string]interface{}{
 				"author":    "test2",
 				"developer": "test2",
 			},
@@ -104,7 +104,7 @@ func TestFilterCatalogByAuthorType(t *testing.T) {
 
 	catalog["test3"] = &service.ComposeApp{
 		Extensions: map[string]interface{}{
-			common.ComposeExtensionNameXCasaOS: map[string]interface{}{
+			common.ComposeExtensionNameXNoxOS: map[string]interface{}{
 				"author":    "test3",
 				"developer": "syncthing",
 			},
@@ -134,7 +134,7 @@ func TestFilterCatalogByAppStoreID(t *testing.T) {
 
 	catalog["test"] = &service.ComposeApp{
 		Extensions: map[string]interface{}{
-			common.ComposeExtensionNameXCasaOS: map[string]interface{}{
+			common.ComposeExtensionNameXNoxOS: map[string]interface{}{
 				"main": "test",
 			},
 		},
@@ -142,7 +142,7 @@ func TestFilterCatalogByAppStoreID(t *testing.T) {
 			{
 				Name: "test",
 				Extensions: map[string]interface{}{
-					common.ComposeExtensionNameXCasaOS: map[string]interface{}{
+					common.ComposeExtensionNameXNoxOS: map[string]interface{}{
 						"app_store_id": "test",
 					},
 				},
@@ -155,7 +155,7 @@ func TestFilterCatalogByAppStoreID(t *testing.T) {
 
 	catalog["test2"] = &service.ComposeApp{
 		Extensions: map[string]interface{}{
-			common.ComposeExtensionNameXCasaOS: map[string]interface{}{
+			common.ComposeExtensionNameXNoxOS: map[string]interface{}{
 				"main": "test2",
 			},
 		},
@@ -163,7 +163,7 @@ func TestFilterCatalogByAppStoreID(t *testing.T) {
 			{
 				Name: "test2",
 				Extensions: map[string]interface{}{
-					common.ComposeExtensionNameXCasaOS: map[string]interface{}{
+					common.ComposeExtensionNameXNoxOS: map[string]interface{}{
 						"app_store_id": "test2",
 					},
 				},

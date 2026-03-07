@@ -6,11 +6,11 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/IceWhaleTech/CasaOS-AppManagement/common"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/pkg/config"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/file"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
-	timeutils "github.com/IceWhaleTech/CasaOS-Common/utils/time"
+	"github.com/Nox-OS/NoxOS-AppManagement/common"
+	"github.com/Nox-OS/NoxOS-AppManagement/pkg/config"
+	"github.com/Nox-OS/NoxOS-Common/utils/file"
+	"github.com/Nox-OS/NoxOS-Common/utils/logger"
+	timeutils "github.com/Nox-OS/NoxOS-Common/utils/time"
 	"gopkg.in/yaml.v3"
 
 	"github.com/docker/cli/cli/command"

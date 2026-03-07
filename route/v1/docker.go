@@ -8,19 +8,19 @@ import (
 	"strings"
 	"time"
 
-	"github.com/IceWhaleTech/CasaOS-AppManagement/common"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/model"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/pkg/config"
-	v2 "github.com/IceWhaleTech/CasaOS-AppManagement/route/v2"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/service"
-	v1 "github.com/IceWhaleTech/CasaOS-AppManagement/service/v1"
-	modelCommon "github.com/IceWhaleTech/CasaOS-Common/model"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/common_err"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/file"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/port"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/ssh"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/systemctl"
+	"github.com/Nox-OS/NoxOS-AppManagement/common"
+	"github.com/Nox-OS/NoxOS-AppManagement/model"
+	"github.com/Nox-OS/NoxOS-AppManagement/pkg/config"
+	v2 "github.com/Nox-OS/NoxOS-AppManagement/route/v2"
+	"github.com/Nox-OS/NoxOS-AppManagement/service"
+	v1 "github.com/Nox-OS/NoxOS-AppManagement/service/v1"
+	modelCommon "github.com/Nox-OS/NoxOS-Common/model"
+	"github.com/Nox-OS/NoxOS-Common/utils/common_err"
+	"github.com/Nox-OS/NoxOS-Common/utils/file"
+	"github.com/Nox-OS/NoxOS-Common/utils/logger"
+	"github.com/Nox-OS/NoxOS-Common/utils/port"
+	"github.com/Nox-OS/NoxOS-Common/utils/ssh"
+	"github.com/Nox-OS/NoxOS-Common/utils/systemctl"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/errdefs"
 	"github.com/gorilla/websocket"
@@ -32,7 +32,7 @@ import (
 )
 
 const (
-	dockerRootDirFilePath             = "/var/lib/casaos/docker_root"
+	dockerRootDirFilePath             = "/var/lib/noxos/docker_root"
 	dockerDaemonConfigurationFilePath = "/etc/docker/daemon.json"
 )
 
@@ -488,7 +488,7 @@ func MyAppList(ctx echo.Context) error {
 
 	casaOSApps, localApps := service.MyService.Docker().GetContainerAppList(&name, &image, &state)
 	data := make(map[string]interface{}, 2)
-	data["casaos_apps"] = casaOSApps
+	data["noxos_apps"] = casaOSApps
 	data["local_apps"] = localApps
 
 	return ctx.JSON(common_err.SUCCESS, &modelCommon.Result{Success: common_err.SUCCESS, Message: common_err.GetMsg(common_err.SUCCESS), Data: data})
@@ -684,7 +684,7 @@ func pullAndInstall(ctx context.Context, imageName string, m *model.Customizatio
 		return err
 	}
 
-	config.CasaOSGlobalVariables.AppChange = true
+	config.NoxOSGlobalVariables.AppChange = true
 	return nil
 }
 
@@ -755,7 +755,7 @@ func uninstall(ctx context.Context, container *types.ContainerJSON, isDelete boo
 			}
 		}
 	}
-	config.CasaOSGlobalVariables.AppChange = true
+	config.NoxOSGlobalVariables.AppChange = true
 
 	return nil
 }

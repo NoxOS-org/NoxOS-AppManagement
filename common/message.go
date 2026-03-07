@@ -1,8 +1,8 @@
 package common
 
 import (
-	"github.com/IceWhaleTech/CasaOS-AppManagement/codegen/message_bus"
-	"github.com/IceWhaleTech/CasaOS-Common/utils"
+	"github.com/Nox-OS/NoxOS-AppManagement/codegen/message_bus"
+	"github.com/Nox-OS/NoxOS-Common/utils"
 )
 
 // common properties

@@ -7,13 +7,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/IceWhaleTech/CasaOS-AppManagement/codegen"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/common"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/pkg/config"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/pkg/docker"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/service"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/file"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
+	"github.com/Nox-OS/NoxOS-AppManagement/codegen"
+	"github.com/Nox-OS/NoxOS-AppManagement/common"
+	"github.com/Nox-OS/NoxOS-AppManagement/pkg/config"
+	"github.com/Nox-OS/NoxOS-AppManagement/pkg/docker"
+	"github.com/Nox-OS/NoxOS-AppManagement/service"
+	"github.com/Nox-OS/NoxOS-Common/utils/file"
+	"github.com/Nox-OS/NoxOS-Common/utils/logger"
 	"go.uber.org/goleak"
 	"golang.org/x/net/context"
 	"gopkg.in/yaml.v3"
@@ -61,7 +61,7 @@ func TestAppStoreList(t *testing.T) {
 
 	ctx = common.WithProperties(ctx, map[string]string{})
 
-	expectAppStoreURL := strings.ToLower("https://github.com/IceWhaleTech/_appstore/archive/refs/heads/main.zip")
+	expectAppStoreURL := strings.ToLower("https://github.com/Nox-OS/_appstore/archive/refs/heads/main.zip")
 
 	ch := make(chan *codegen.AppStoreMetadata)
 

@@ -1,0 +1,13 @@
+[common]
+RuntimePath = /var/run/noxos
+
+[app]
+LogPath = /var/log/noxos/
+LogSaveName = app-management
+LogFileExt = log
+AppStorePath = /var/lib/noxos/appstore
+AppsPath = /var/lib/noxos/apps
+
+[server]
+appstore = https://cdn.jsdelivr.net/gh/Nox-OS/NoxOS-AppStore@gh-pages/store/main.zip
+appstore = https://github.com/bigbeartechworld/big-bear-noxos/archive/refs/heads/master.zip

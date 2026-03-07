@@ -7,12 +7,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/IceWhaleTech/CasaOS-AppManagement/codegen"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/pkg/config"
+	"github.com/Nox-OS/NoxOS-AppManagement/codegen"
+	"github.com/Nox-OS/NoxOS-AppManagement/pkg/config"
 
-	v2Route "github.com/IceWhaleTech/CasaOS-AppManagement/route/v2"
-	"github.com/IceWhaleTech/CasaOS-Common/external"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/jwt"
+	v2Route "github.com/Nox-OS/NoxOS-AppManagement/route/v2"
+	"github.com/Nox-OS/NoxOS-Common/external"
+	"github.com/Nox-OS/NoxOS-Common/utils/jwt"
 	"github.com/deepmap/oapi-codegen/pkg/middleware"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/getkin/kin-openapi/openapi3filter"

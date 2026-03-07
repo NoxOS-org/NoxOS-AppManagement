@@ -1,0 +1,14 @@
+[Unit]
+After=noxos-message-bus.service
+After=docker.service
+Description=NoxOS App Management Service
+
+[Service]
+ExecStartPre=/usr/bin/noxos-app-management -v
+ExecStart=/usr/bin/noxos-app-management -c /etc/noxos/app-management.conf --removeRuntimeIfNoNvidiaGPU true
+PIDFile=/run/noxos/app-management.pid
+Restart=always
+Type=notify
+
+[Install]
+WantedBy=multi-user.target

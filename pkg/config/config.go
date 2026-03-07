@@ -3,7 +3,7 @@ package config
 import (
 	"path/filepath"
 
-	"github.com/IceWhaleTech/CasaOS-Common/utils/constants"
+	"github.com/Nox-OS/NoxOS-Common/utils/constants"
 )
 
 var (

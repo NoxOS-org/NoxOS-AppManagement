@@ -64,7 +64,7 @@ __get_download_domain(){
        region=$(curl --connect-timeout 2 -s https://ifconfig.io/country_code || echo "")
     fi
     if [[ "${region}" = "China" ]] || [[ "${region}" = "CN" ]]; then
-        echo "https://casaos.oss-cn-shanghai.aliyuncs.com/"
+        echo "https://noxos.oss-cn-shanghai.aliyuncs.com/"
     else
         echo "https://github.com/"
     fi
@@ -76,9 +76,9 @@ BUILD_PATH=$(dirname "${BASH_SOURCE[0]}")/../../..
 readonly BUILD_PATH
 readonly SOURCE_ROOT=${BUILD_PATH}/sysroot
 
-readonly APP_NAME="casaos-app-management"
+readonly APP_NAME="noxos-app-management"
 readonly APP_NAME_SHORT="app-management"
-readonly APP_NAME_LEGACY="casaos"
+readonly APP_NAME_LEGACY="noxos"
 
 # check if migration is needed
 readonly SOURCE_BIN_PATH=${SOURCE_ROOT}/usr/bin

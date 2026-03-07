@@ -9,19 +9,19 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/IceWhaleTech/CasaOS-AppManagement/codegen"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/common"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/pkg/config"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/pkg/docker"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/service"
-	"github.com/IceWhaleTech/CasaOS-Common/utils"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
+	"github.com/Nox-OS/NoxOS-AppManagement/codegen"
+	"github.com/Nox-OS/NoxOS-AppManagement/common"
+	"github.com/Nox-OS/NoxOS-AppManagement/pkg/config"
+	"github.com/Nox-OS/NoxOS-AppManagement/pkg/docker"
+	"github.com/Nox-OS/NoxOS-AppManagement/service"
+	"github.com/Nox-OS/NoxOS-Common/utils"
+	"github.com/Nox-OS/NoxOS-Common/utils/logger"
 	"github.com/labstack/echo/v4"
 	"github.com/samber/lo"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 
-	pkg_utils "github.com/IceWhaleTech/CasaOS-AppManagement/pkg/utils"
+	pkg_utils "github.com/Nox-OS/NoxOS-AppManagement/pkg/utils"
 )
 
 func (a *AppManagement) AppStoreList(ctx echo.Context) error {
@@ -33,7 +33,7 @@ func (a *AppManagement) AppStoreList(ctx echo.Context) error {
 }
 
 // the method should be deprecated
-// but it be used by CasaOS
+// but it be used by NoxOS
 func (a *AppManagement) RegisterAppStore(ctx echo.Context, params codegen.RegisterAppStoreParams) error {
 	if params.Url == nil || *params.Url == "" {
 		message := "appstore url is required"

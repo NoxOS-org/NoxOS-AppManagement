@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/IceWhaleTech/CasaOS-AppManagement/codegen"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/common"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/pkg/config"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/service"
-	"github.com/IceWhaleTech/CasaOS-Common/utils"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
+	"github.com/Nox-OS/NoxOS-AppManagement/codegen"
+	"github.com/Nox-OS/NoxOS-AppManagement/common"
+	"github.com/Nox-OS/NoxOS-AppManagement/pkg/config"
+	"github.com/Nox-OS/NoxOS-AppManagement/service"
+	"github.com/Nox-OS/NoxOS-Common/utils"
+	"github.com/Nox-OS/NoxOS-Common/utils/logger"
 	"go.uber.org/zap"
 
 	"github.com/labstack/echo/v4"

@@ -3,9 +3,9 @@ package v2
 import (
 	"net/http"
 
-	"github.com/IceWhaleTech/CasaOS-AppManagement/codegen"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/pkg/docker"
-	"github.com/IceWhaleTech/CasaOS-Common/utils"
+	"github.com/Nox-OS/NoxOS-AppManagement/codegen"
+	"github.com/Nox-OS/NoxOS-AppManagement/pkg/docker"
+	"github.com/Nox-OS/NoxOS-Common/utils"
 	"github.com/labstack/echo/v4"
 )
 

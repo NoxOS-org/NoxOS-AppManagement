@@ -7,11 +7,11 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/IceWhaleTech/CasaOS-AppManagement/codegen"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/common"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/service"
-	"github.com/IceWhaleTech/CasaOS-Common/utils"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
+	"github.com/Nox-OS/NoxOS-AppManagement/codegen"
+	"github.com/Nox-OS/NoxOS-AppManagement/common"
+	"github.com/Nox-OS/NoxOS-AppManagement/service"
+	"github.com/Nox-OS/NoxOS-Common/utils"
+	"github.com/Nox-OS/NoxOS-Common/utils/logger"
 	"github.com/compose-spec/compose-go/types"
 	"github.com/labstack/echo/v4"
 	"github.com/samber/lo"
@@ -300,6 +300,35 @@ func (a *AppManagement) InstallComposeApp(ctx echo.Context, params codegen.Insta
 
 	_ = composeApp.SetUncontrolled(uncontrolled)
 
+	installedComposeApps, err := service.MyService.Compose().List(ctx.Request().Context())
+	if err != nil {
+		message := err.Error()
+		return ctx.JSON(http.StatusInternalServerError, codegen.ResponseInternalServerError{
+			Message: &message,
+		})
+	}
+
+	originalComposeAppName := composeApp.Name
+	if _, alreadyInstalled := installedComposeApps[originalComposeAppName]; alreadyInstalled {
+		composeApp.Name = nextComposeAppName(originalComposeAppName, installedComposeApps)
+		composeApp.RenameAppDataSourcePath(originalComposeAppName, composeApp.Name)
+
+		if _, ok := composeApp.SetStoreAppID(originalComposeAppName); !ok {
+			logger.Info("failed to keep original store_app_id after cloning", zap.String("originalName", originalComposeAppName), zap.String("newName", composeApp.Name))
+		}
+
+		if err := composeApp.SuggestAvailablePublishedPorts(); err != nil {
+			message := err.Error()
+			return ctx.JSON(http.StatusInternalServerError, codegen.ResponseInternalServerError{
+				Message: &message,
+			})
+		}
+
+		if err := composeApp.SyncPortMapFromMainService(); err != nil {
+			logger.Info("failed to sync x-noxos.port_map from main service", zap.Error(err), zap.String("name", composeApp.Name))
+		}
+	}
+
 	if params.CheckPortConflict == nil || *params.CheckPortConflict {
 		// validation 1 - check if there are ports in use
 		validation, err := composeApp.GetPortsInUse()
@@ -345,7 +374,7 @@ func (a *AppManagement) InstallComposeApp(ctx echo.Context, params codegen.Insta
 		logger.Error("failed to start compose app installation", zap.Error(err))
 
 		message := err.Error()
-		if err == service.ErrComposeExtensionNameXCasaOSNotFound {
+		if err == service.ErrComposeExtensionNameXNoxOSNotFound {
 			return ctx.JSON(http.StatusBadRequest, codegen.ResponseBadRequest{Message: &message})
 		}
 
@@ -355,6 +384,23 @@ func (a *AppManagement) InstallComposeApp(ctx echo.Context, params codegen.Insta
 	return ctx.JSON(http.StatusOK, codegen.ComposeAppInstallOK{
 		Message: lo.ToPtr("compose app is being installed asynchronously"),
 	})
+}
+
+func nextComposeAppName(baseName string, installed map[string]*service.ComposeApp) string {
+	if baseName == "" {
+		return "app"
+	}
+
+	if _, exists := installed[baseName]; !exists {
+		return baseName
+	}
+
+	for index := 2; ; index++ {
+		candidate := fmt.Sprintf("%s-%d", baseName, index)
+		if _, exists := installed[candidate]; !exists {
+			return candidate
+		}
+	}
 }
 
 func (a *AppManagement) UninstallComposeApp(ctx echo.Context, id codegen.ComposeAppID, params codegen.UninstallComposeAppParams) error {
@@ -635,7 +681,7 @@ func YAMLfromRequest(ctx echo.Context) ([]byte, error) {
 type composeAppsWithStoreInfoOpts struct {
 	checkIsUpdateAvailable bool
 	// The /web/appgrid endpoint does not require information about whether the application can be updated, so we added an option.
-	// This endpoint is called as soon as CasaOS is opened, and we don't have time to cache it in advance.
+	// This endpoint is called as soon as NoxOS is opened, and we don't have time to cache it in advance.
 	// We must ensure that this endpoint responds as quickly as possible.
 }
 
@@ -690,7 +736,7 @@ func composeAppsWithStoreInfo(ctx context.Context, opts composeAppsWithStoreInfo
 			return composeAppWithStoreInfo
 		}
 
-		isUncontrolled, ok := composeApp.Extensions[common.ComposeExtensionNameXCasaOS].(map[string]interface{})[common.ComposeExtensionPropertyNameIsUncontrolled].(bool)
+		isUncontrolled, ok := composeApp.Extensions[common.ComposeExtensionNameXNoxOS].(map[string]interface{})[common.ComposeExtensionPropertyNameIsUncontrolled].(bool)
 		if ok {
 			composeAppWithStoreInfo.IsUncontrolled = &isUncontrolled
 		}

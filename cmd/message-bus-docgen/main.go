@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/IceWhaleTech/CasaOS-AppManagement/codegen/message_bus"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/common"
-	"github.com/IceWhaleTech/CasaOS-Common/external"
+	"github.com/Nox-OS/NoxOS-AppManagement/codegen/message_bus"
+	"github.com/Nox-OS/NoxOS-AppManagement/common"
+	"github.com/Nox-OS/NoxOS-Common/external"
 	"github.com/samber/lo"
 )
 

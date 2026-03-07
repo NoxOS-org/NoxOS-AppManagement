@@ -8,9 +8,9 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
 
-	"github.com/IceWhaleTech/CasaOS-AppManagement/common"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/model"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
+	"github.com/Nox-OS/NoxOS-AppManagement/common"
+	"github.com/Nox-OS/NoxOS-AppManagement/model"
+	"github.com/Nox-OS/NoxOS-Common/utils/logger"
 )
 
 const (

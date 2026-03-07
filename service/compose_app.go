@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -13,18 +14,18 @@ import (
 	"strings"
 	"time"
 
-	v1 "github.com/IceWhaleTech/CasaOS-AppManagement/service/v1"
+	v1 "github.com/Nox-OS/NoxOS-AppManagement/service/v1"
 
-	"github.com/IceWhaleTech/CasaOS-AppManagement/codegen"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/common"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/pkg/config"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/pkg/docker"
-	"github.com/IceWhaleTech/CasaOS-Common/external"
-	"github.com/IceWhaleTech/CasaOS-Common/utils"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/file"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/port"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/random"
+	"github.com/Nox-OS/NoxOS-AppManagement/codegen"
+	"github.com/Nox-OS/NoxOS-AppManagement/common"
+	"github.com/Nox-OS/NoxOS-AppManagement/pkg/config"
+	"github.com/Nox-OS/NoxOS-AppManagement/pkg/docker"
+	"github.com/Nox-OS/NoxOS-Common/external"
+	"github.com/Nox-OS/NoxOS-Common/utils"
+	"github.com/Nox-OS/NoxOS-Common/utils/file"
+	"github.com/Nox-OS/NoxOS-Common/utils/logger"
+	"github.com/Nox-OS/NoxOS-Common/utils/port"
+	"github.com/Nox-OS/NoxOS-Common/utils/random"
 	"github.com/compose-spec/compose-go/cli"
 	"github.com/compose-spec/compose-go/loader"
 	"github.com/compose-spec/compose-go/types"
@@ -41,9 +42,9 @@ import (
 type ComposeApp codegen.ComposeApp
 
 func (a *ComposeApp) StoreInfo(includeApps bool) (*codegen.ComposeAppStoreInfo, error) {
-	ex, ok := a.Extensions[common.ComposeExtensionNameXCasaOS]
+	ex, ok := a.Extensions[common.ComposeExtensionNameXNoxOS]
 	if !ok {
-		return nil, ErrComposeExtensionNameXCasaOSNotFound
+		return nil, ErrComposeExtensionNameXNoxOSNotFound
 	}
 
 	var storeInfo codegen.ComposeAppStoreInfo
@@ -53,7 +54,7 @@ func (a *ComposeApp) StoreInfo(includeApps bool) (*codegen.ComposeAppStoreInfo, 
 	}
 
 	// TODO refactor this with ComposeAppWithStoreInfo
-	isUncontrolled, ok := a.Extensions[common.ComposeExtensionNameXCasaOS].(map[string]interface{})[common.ComposeExtensionPropertyNameIsUncontrolled].(bool)
+	isUncontrolled, ok := a.Extensions[common.ComposeExtensionNameXNoxOS].(map[string]interface{})[common.ComposeExtensionPropertyNameIsUncontrolled].(bool)
 	if ok {
 		storeInfo.IsUncontrolled = &isUncontrolled
 	}
@@ -77,8 +78,8 @@ func (a *ComposeApp) StoreInfo(includeApps bool) (*codegen.ComposeAppStoreInfo, 
 		for _, app := range a.Apps() {
 			appStoreInfo, err := app.StoreInfo()
 			if err != nil {
-				if err == ErrComposeExtensionNameXCasaOSNotFound {
-					logger.Info("App does not have x-casaos extension - skipping", zap.String("app", app.Name))
+				if err == ErrComposeExtensionNameXNoxOSNotFound {
+					logger.Info("App does not have x-noxos extension - skipping", zap.String("app", app.Name))
 					continue
 				}
 
@@ -102,7 +103,7 @@ func (a *ComposeApp) AuthorType() codegen.StoreAppAuthorType {
 	if strings.EqualFold(storeInfo.Author, storeInfo.Developer) {
 		return codegen.Official
 	}
-	if strings.EqualFold(storeInfo.Author, common.ComposeAppAuthorCasaOSTeam) {
+	if strings.EqualFold(storeInfo.Author, common.ComposeAppAuthorNoxOSTeam) {
 		return codegen.ByCasaos
 	}
 
@@ -111,15 +112,15 @@ func (a *ComposeApp) AuthorType() codegen.StoreAppAuthorType {
 
 func (a *ComposeApp) SetStoreAppID(storeAppID string) (string, bool) {
 	// set store_app_id (by convention is the same as app name at install time if it does not exist)
-	extension, ok := a.Extensions[common.ComposeExtensionNameXCasaOS]
+	extension, ok := a.Extensions[common.ComposeExtensionNameXNoxOS]
 	if !ok {
-		logger.Info("compose app does not have x-casaos extension - might not be a compose app for CasaOS", zap.String("app", a.Name))
+		logger.Info("compose app does not have x-noxos extension - might not be a compose app for NoxOS", zap.String("app", a.Name))
 		return "", false
 	}
 
 	composeAppStoreInfo, ok := extension.(map[string]interface{})
 	if !ok {
-		logger.Info("compose app does not have valid x-casaos extension - might not be a compose app for CasaOS", zap.String("app", a.Name))
+		logger.Info("compose app does not have valid x-noxos extension - might not be a compose app for NoxOS", zap.String("app", a.Name))
 		return "", false
 	}
 
@@ -141,15 +142,15 @@ func (a *ComposeApp) SetTitle(title, lang string) {
 		a.Extensions = make(map[string]interface{})
 	}
 
-	extension, ok := a.Extensions[common.ComposeExtensionNameXCasaOS]
+	extension, ok := a.Extensions[common.ComposeExtensionNameXNoxOS]
 	if !ok {
 		extension = map[string]interface{}{}
-		a.Extensions[common.ComposeExtensionNameXCasaOS] = extension
+		a.Extensions[common.ComposeExtensionNameXNoxOS] = extension
 	}
 
 	composeAppStoreInfo, ok := extension.(map[string]interface{})
 	if !ok {
-		logger.Info("compose app does not have valid x-casaos extension - might not be a compose app for CasaOS", zap.String("app", a.Name))
+		logger.Info("compose app does not have valid x-noxos extension - might not be a compose app for NoxOS", zap.String("app", a.Name))
 		return
 	}
 
@@ -159,13 +160,175 @@ func (a *ComposeApp) SetTitle(title, lang string) {
 
 	titleMap, ok := composeAppStoreInfo[common.ComposeExtensionPropertyNameTitle].(map[string]string)
 	if !ok {
-		logger.Info("compose app does not have valid title map in its x-casaos extension - might not be a compose app for CasaOS", zap.String("app", a.Name))
+		logger.Info("compose app does not have valid title map in its x-noxos extension - might not be a compose app for NoxOS", zap.String("app", a.Name))
 		return
 	}
 
 	if _, ok := titleMap[lang]; !ok {
 		titleMap[lang] = title
 	}
+}
+
+func (a *ComposeApp) RenameAppDataSourcePath(oldName, newName string) {
+	if oldName == "" || newName == "" || oldName == newName {
+		return
+	}
+
+	for serviceIdx := range a.Services {
+		for volumeIdx := range a.Services[serviceIdx].Volumes {
+			source := a.Services[serviceIdx].Volumes[volumeIdx].Source
+			if source == "" || strings.Contains(source, "$AppID") {
+				continue
+			}
+
+			// Keep app data of cloned app isolated from the source app.
+			source = strings.Replace(source, "/DATA/AppData/"+oldName, "/DATA/AppData/"+newName, 1)
+			source = strings.Replace(source, "/AppData/"+oldName, "/AppData/"+newName, 1)
+			source = rewriteAppDataSourcePrefix(source, "/DATA/AppData/", newName)
+			source = rewriteAppDataSourcePrefix(source, "/AppData/", newName)
+			a.Services[serviceIdx].Volumes[volumeIdx].Source = source
+		}
+	}
+}
+
+func rewriteAppDataSourcePrefix(source, prefix, newName string) string {
+	index := strings.Index(source, prefix)
+	if index < 0 {
+		return source
+	}
+
+	appDataRoot := index + len(prefix)
+	if appDataRoot >= len(source) {
+		return source
+	}
+
+	rest := source[appDataRoot:]
+	if strings.HasPrefix(rest, "/") {
+		return source
+	}
+
+	parts := strings.SplitN(rest, "/", 2)
+	if len(parts) == 0 || parts[0] == "" {
+		return source
+	}
+
+	rewritten := newName
+	if len(parts) == 2 {
+		rewritten += "/" + parts[1]
+	}
+
+	return source[:appDataRoot] + rewritten
+}
+
+func (a *ComposeApp) SuggestAvailablePublishedPorts() error {
+	tcpPortsInUse, udpPortsInUse, err := port.ListPortsInUse()
+	if err != nil {
+		return err
+	}
+
+	usedTCP := map[int]struct{}{}
+	usedUDP := map[int]struct{}{}
+
+	for _, p := range tcpPortsInUse {
+		usedTCP[p] = struct{}{}
+	}
+	for _, p := range udpPortsInUse {
+		usedUDP[p] = struct{}{}
+	}
+
+	for serviceIdx := range a.Services {
+		for portIdx := range a.Services[serviceIdx].Ports {
+			p := &a.Services[serviceIdx].Ports[portIdx]
+
+			if p.Published == "" || strings.Contains(p.Published, "-") {
+				continue
+			}
+
+			currentPort, err := strconv.Atoi(p.Published)
+			if err != nil || currentPort <= 0 {
+				continue
+			}
+
+			protocol := strings.ToLower(p.Protocol)
+			if protocol != "udp" {
+				protocol = "tcp"
+			}
+
+			usedSet := usedTCP
+			if protocol == "udp" {
+				usedSet = usedUDP
+			}
+
+			if _, inUse := usedSet[currentPort]; !inUse {
+				usedSet[currentPort] = struct{}{}
+				continue
+			}
+
+			freePort, err := nextAvailablePort(protocol, usedSet)
+			if err != nil {
+				return err
+			}
+
+			p.Published = strconv.Itoa(freePort)
+			usedSet[freePort] = struct{}{}
+		}
+	}
+
+	return nil
+}
+
+func (a *ComposeApp) SyncPortMapFromMainService() error {
+	storeInfo, err := a.StoreInfo(false)
+	if err != nil || storeInfo == nil || storeInfo.Main == nil || *storeInfo.Main == "" {
+		return nil
+	}
+
+	mainService := a.App(*storeInfo.Main)
+	if mainService == nil {
+		return nil
+	}
+
+	portMap := ""
+	for _, p := range mainService.Ports {
+		if p.Published != "" {
+			portMap = p.Published
+			break
+		}
+	}
+
+	if portMap == "" {
+		return nil
+	}
+
+	extension, ok := a.Extensions[common.ComposeExtensionNameXNoxOS]
+	if !ok {
+		return nil
+	}
+
+	composeAppStoreInfo, ok := extension.(map[string]interface{})
+	if !ok {
+		return nil
+	}
+
+	composeAppStoreInfo["port_map"] = portMap
+	return nil
+}
+
+func nextAvailablePort(protocol string, usedPorts map[int]struct{}) (int, error) {
+	for attempt := 0; attempt < 20; attempt++ {
+		p, err := port.GetAvailablePort(protocol)
+		if err != nil {
+			return 0, err
+		}
+
+		if _, alreadyUsed := usedPorts[p]; alreadyUsed {
+			continue
+		}
+
+		return p, nil
+	}
+
+	return 0, errors.New("failed to allocate an available port")
 }
 
 func (a *ComposeApp) Update(ctx context.Context) error {
@@ -949,7 +1112,7 @@ func removeRuntime(a *ComposeApp) {
 }
 
 func NewComposeAppFromYAML(yaml []byte, skipInterpolation, skipValidation bool) (*ComposeApp, error) {
-	tmpWorkingDir, err := os.MkdirTemp("", "casaos-compose-app-*")
+	tmpWorkingDir, err := os.MkdirTemp("", "noxos-compose-app-*")
 	if err != nil {
 		return nil, err
 	}
@@ -1058,16 +1221,16 @@ func getNameFrom(composeYAML []byte) string {
 }
 
 func (a *ComposeApp) SetUncontrolled(uncontrolled bool) error {
-	xCasaos := a.Extensions[common.ComposeExtensionNameXCasaOS]
+	xCasaos := a.Extensions[common.ComposeExtensionNameXNoxOS]
 	xCasaosMap, ok := xCasaos.(map[string]interface{})
 
 	// set to controlled app
 	if !ok {
 		logger.Error("failed to get map compose app extensions", zap.String("composeAppID", a.Name))
-		return ErrComposeExtensionNameXCasaOSNotFound
+		return ErrComposeExtensionNameXNoxOSNotFound
 	} else {
 		xCasaosMap[common.ComposeExtensionPropertyNameIsUncontrolled] = uncontrolled
-		a.Extensions[common.ComposeExtensionNameXCasaOS] = xCasaosMap
+		a.Extensions[common.ComposeExtensionNameXNoxOS] = xCasaosMap
 	}
 
 	return nil

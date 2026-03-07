@@ -1,12 +1,12 @@
-# CasaOS-AppManagement Binary Build & Deployment
+# NoxOS-AppManagement Binary Build & Deployment
 
 ## What Was Done
 
-The original `IceWhaleTech/CasaOS-AppManagement` code already uses Docker API version negotiation correctly (`client.WithAPIVersionNegotiation()`), so **no code changes were needed**. The issue was likely that your deployed binary was compiled with an older version.
+The original `Nox-OS/NoxOS-AppManagement` code already uses Docker API version negotiation correctly (`client.WithAPIVersionNegotiation()`), so **no code changes were needed**. The issue was likely that your deployed binary was compiled with an older version.
 
 ## Build Details
 
-- **Binary**: `dist/casaos-app-management`
+- **Binary**: `dist/noxos-app-management`
 - **Architecture**: Linux amd64
 - **Size**: 64 MB
 - **Build Date**: 2026-02-08
@@ -21,7 +21,7 @@ The original `IceWhaleTech/CasaOS-AppManagement` code already uses Docker API ve
 
 On your server:
 ```bash
-sudo cp /usr/bin/casaos-app-management /usr/bin/casaos-app-management.bak
+sudo cp /usr/bin/noxos-app-management /usr/bin/noxos-app-management.bak
 ```
 
 ### 2. Transfer New Binary
@@ -29,10 +29,10 @@ sudo cp /usr/bin/casaos-app-management /usr/bin/casaos-app-management.bak
 From your development machine (where you built the binary):
 ```bash
 # Option A: Using SCP
-scp /config/workspace/casaos101/CasaOS-AppManagement/dist/casaos-app-management user@your-server:/tmp/
+scp /config/workspace/noxos101/NoxOS-AppManagement/dist/noxos-app-management user@your-server:/tmp/
 
 # Option B: Using rsync
-rsync -avz /config/workspace/casaos101/CasaOS-AppManagement/dist/casaos-app-management user@your-server:/tmp/
+rsync -avz /config/workspace/noxos101/NoxOS-AppManagement/dist/noxos-app-management user@your-server:/tmp/
 ```
 
 ### 3. Replace Binary on Server
@@ -40,27 +40,27 @@ rsync -avz /config/workspace/casaos101/CasaOS-AppManagement/dist/casaos-app-mana
 On your server:
 ```bash
 # Stop the service
-sudo systemctl stop casaos-app-management
+sudo systemctl stop noxos-app-management
 
 # Replace the binary
-sudo cp /tmp/casaos-app-management /usr/bin/casaos-app-management
+sudo cp /tmp/noxos-app-management /usr/bin/noxos-app-management
 
 # Ensure correct permissions
-sudo chmod +x /usr/bin/casaos-app-management
-sudo chown root:root /usr/bin/casaos-app-management
+sudo chmod +x /usr/bin/noxos-app-management
+sudo chown root:root /usr/bin/noxos-app-management
 
 # Start the service
-sudo systemctl start casaos-app-management
+sudo systemctl start noxos-app-management
 ```
 
 ### 4. Verify
 
 ```bash
 # Check service status
-sudo systemctl status casaos-app-management
+sudo systemctl status noxos-app-management
 
 # Check logs for API version errors (should be gone)
-sudo journalctl -u casaos-app-management -f --since "1 minute ago"
+sudo journalctl -u noxos-app-management -f --since "1 minute ago"
 ```
 
 You should **no longer see** the error:
@@ -72,9 +72,9 @@ client version 1.43 is too old. Minimum supported API version is 1.44
 
 If something goes wrong:
 ```bash
-sudo systemctl stop casaos-app-management
-sudo cp /usr/bin/casaos-app-management.bak /usr/bin/casaos-app-management
-sudo systemctl start casaos-app-management
+sudo systemctl stop noxos-app-management
+sudo cp /usr/bin/noxos-app-management.bak /usr/bin/noxos-app-management
+sudo systemctl start noxos-app-management
 ```
 
 ## Technical Details
@@ -96,7 +96,7 @@ After deployment, you can verify the API negotiation is working:
 docker version --format '{{.Server.APIVersion}}'
 
 # Check what version the app-management is using (in logs)
-sudo journalctl -u casaos-app-management -n 100 | grep -i "api\|version"
+sudo journalctl -u noxos-app-management -n 100 | grep -i "api\|version"
 ```
 
 ## Notes

@@ -6,19 +6,19 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/IceWhaleTech/CasaOS-AppManagement/common"
-	interfaces "github.com/IceWhaleTech/CasaOS-Common"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/systemctl"
+	"github.com/Nox-OS/NoxOS-AppManagement/common"
+	interfaces "github.com/Nox-OS/NoxOS-Common"
+	"github.com/Nox-OS/NoxOS-Common/utils/systemctl"
 )
 
 const (
-	appManagementConfigDirPath  = "/etc/casaos"
-	appManagementConfigFilePath = "/etc/casaos/app-management.conf"
-	appManagementName           = "casaos-app-management.service"
+	appManagementConfigDirPath  = "/etc/noxos"
+	appManagementConfigFilePath = "/etc/noxos/app-management.conf"
+	appManagementName           = "noxos-app-management.service"
 	appManagementNameShort      = "app-management"
 )
 
-//go:embedded ../../build/sysroot/etc/casaos/app-management.conf.sample
+//go:embedded ../../build/sysroot/etc/noxos/app-management.conf.sample
 //var _appManagementConfigFileSample string
 
 var (

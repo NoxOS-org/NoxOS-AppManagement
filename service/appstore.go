@@ -11,12 +11,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/IceWhaleTech/CasaOS-AppManagement/codegen"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/common"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/pkg/config"
-	"github.com/IceWhaleTech/CasaOS-AppManagement/pkg/utils/downloadHelper"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/file"
-	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
+	"github.com/Nox-OS/NoxOS-AppManagement/codegen"
+	"github.com/Nox-OS/NoxOS-AppManagement/common"
+	"github.com/Nox-OS/NoxOS-AppManagement/pkg/config"
+	"github.com/Nox-OS/NoxOS-AppManagement/pkg/utils/downloadHelper"
+	"github.com/Nox-OS/NoxOS-Common/utils/file"
+	"github.com/Nox-OS/NoxOS-Common/utils/logger"
 	"github.com/samber/lo"
 	"go.uber.org/zap"
 )
@@ -155,7 +155,7 @@ func (s *appStore) UpdateCatalog() error {
 		return err
 	}
 
-	placeholderFile := filepath.Join(storeRoot, ".casaos-appstore")
+	placeholderFile := filepath.Join(storeRoot, ".noxos-appstore")
 	if err := file.CreateFileAndWriteContent(placeholderFile, s.url); err != nil {
 		return err
 	}

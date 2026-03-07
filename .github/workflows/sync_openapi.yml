@@ -12,8 +12,8 @@ on:
 
 jobs:
   sync:
-    uses: IceWhaleTech/github/.github/workflows/sync_openapi.yml@main
+    uses: Nox-OS/github/.github/workflows/sync_openapi.yml@main
     with:
-      project-name: casaos-app-management
+      project-name: noxos-app-management
     secrets:
       API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
