@@ -8,6 +8,9 @@ permissions:
 jobs:
   goreleaser:
     runs-on: ubuntu-22.04
+    env:
+      API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+      SSH_ROBOT_URL: ${{ secrets.SSH_ROBOT_URL }}
     steps:
       -
         name: Checkout
@@ -37,11 +40,11 @@ jobs:
         with:
           go-version: '1.21'
       - name: Configure Git auth for private modules
-        if: ${{ secrets.API_TOKEN_GITHUB != '' }}
+        if: ${{ env.API_TOKEN_GITHUB != '' }}
         run: |
-          git config --global url."https://${{ secrets.API_TOKEN_GITHUB }}@github.com/".insteadOf "https://github.com/"
+          git config --global url."https://${API_TOKEN_GITHUB}@github.com/".insteadOf "https://github.com/"
       - name: Validate private module token
-        if: ${{ secrets.API_TOKEN_GITHUB == '' }}
+        if: ${{ env.API_TOKEN_GITHUB == '' }}
         run: |
           echo "Missing secret API_TOKEN_GITHUB required to fetch private module github.com/Nox-OS/NoxOS-Common"
           exit 1
@@ -91,6 +94,6 @@ jobs:
 #         run: |
 #           curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"text","content":{"text":"NoxOS-AppManagement updated"}}' ${{ secrets.SSH_ROBOT_URL }}
       - name: Error Handling
-        if: ${{ failure() && secrets.SSH_ROBOT_URL != '' }}
+        if: ${{ failure() && env.SSH_ROBOT_URL != '' }}
         run: |
-          curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"text","content":{"text":"NoxOS-AppManagement push Error"}}' ${{ secrets.SSH_ROBOT_URL }} 
+          curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"text","content":{"text":"NoxOS-AppManagement push Error"}}' "${SSH_ROBOT_URL}" 
