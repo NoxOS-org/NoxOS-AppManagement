@@ -247,3 +247,5 @@ require (
 
 // Override for e2e tests
 replace github.com/cucumber/godog => github.com/laurazard/godog v0.0.0-20220922095256-4c4b17abdae7
+
+replace github.com/Nox-OS/NoxOS-Common => ../NoxOS-Common

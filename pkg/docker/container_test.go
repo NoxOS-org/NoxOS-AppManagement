@@ -102,6 +102,10 @@ func TestCloneContainer(t *testing.T) {
 }
 
 func TestNonExistingContainer(t *testing.T) {
+	if !docker.IsDaemonRunning() {
+		t.Skip("Docker daemon is not running")
+	}
+
 	containerInfo, err := docker.Container(context.Background(), "non-existing-container")
 	assert.ErrorContains(t, err, "non-existing-container")
 	assert.Assert(t, containerInfo == nil)
