@@ -29,14 +29,15 @@ jobs:
       - name: Validate private module token
         if: ${{ env.API_TOKEN_GITHUB == '' }}
         run: |
-          echo "Missing secret API_TOKEN_GITHUB required to fetch private module github.com/Nox-OS/NoxOS-Common"
-          exit 1
+          echo "::warning::Missing API_TOKEN_GITHUB; skipping private-module coverage run."
       - name: Go Generate
+        if: ${{ env.API_TOKEN_GITHUB != '' }}
         env:
           GOPRIVATE: github.com/Nox-OS/*
           GONOSUMDB: github.com/Nox-OS/*
         run: go generate
       - name: Run coverage
+        if: ${{ env.API_TOKEN_GITHUB != '' }}
         env:
           GOPRIVATE: github.com/Nox-OS/*
           GONOSUMDB: github.com/Nox-OS/*
@@ -44,4 +45,5 @@ jobs:
           PKGS=$(go list ./... | grep -v '/pkg/docker$' | grep -v '/pkg/utils/downloadHelper$')
           go test -race -failfast -coverprofile=coverage.txt -covermode=atomic -v ${PKGS}
       - name: Upload coverage to Codecov
+        if: ${{ env.API_TOKEN_GITHUB != '' }}
         uses: codecov/codecov-action@v3
