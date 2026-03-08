@@ -279,7 +279,7 @@ changelog:
       - "^test:"
 release:
   github:
-    owner: Nox-OS
+    owner: NoxOS-org
     name: NoxOS-AppManagement
   draft: false
   prerelease: auto
