@@ -1,0 +1,104 @@
+name: Auto Publish Website
+on:
+  push:
+    branches:
+      - main
+permissions:
+  contents: write
+jobs:
+  goreleaser:
+    runs-on: ubuntu-22.04
+    env:
+      API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+      SSH_ROBOT_URL: ${{ secrets.SSH_ROBOT_URL }}
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: isntall git
+        run: sudo apt install --yes git
+      - name: git global
+        run: sudo git config --global --add safe.directory '*'
+      - name: set version
+        run: sudo git tag v99.99.99-alpha 
+      -
+        name: Fetch all tags
+        run: sudo git fetch --force --tags
+      - name: Get version
+        id: get_version
+        # run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: echo "VERSION=$(git describe --abbrev=0 --tags | awk -F- '{print $1}')" >> $GITHUB_ENV
+      - name: show version
+        id: show_version
+        # run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: echo ${{env.VERSION}}
+      -
+        name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+      - name: Configure Git auth for private modules
+        if: ${{ env.API_TOKEN_GITHUB != '' }}
+        run: |
+          git config --global url."https://${API_TOKEN_GITHUB}@github.com/".insteadOf "https://github.com/"
+      - name: Validate private module token
+        if: ${{ env.API_TOKEN_GITHUB == '' }}
+        run: |
+          echo "::warning::Missing API_TOKEN_GITHUB; skipping GoReleaser publish job."
+      -
+        name: Run GoReleaser
+        if: ${{ env.API_TOKEN_GITHUB != '' }}
+        uses: goreleaser/goreleaser-action@v4
+        with:
+          # either 'goreleaser' (default) or 'goreleaser-pro'
+          distribution: goreleaser
+          version: 1.14.1
+          args: release --rm-dist --snapshot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOPRIVATE: github.com/Nox-OS/*
+          GONOSUMDB: github.com/Nox-OS/*
+          # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution
+          # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
+      
+      - name: remove migration file
+        if: ${{ env.API_TOKEN_GITHUB != '' }}
+        run: find . -type f  \( -name '*migration*' \) -delete
+    
+      - name: install sshpass
+        if: ${{ env.API_TOKEN_GITHUB != '' }}
+        run: sudo apt install sshpass --yes
+      - name: ZeroTier
+        if: ${{ env.API_TOKEN_GITHUB != '' }}
+        uses: zerotier/github-action@v1.0.1
+        with:
+            network_id: ${{ secrets.ZEROTIER_NETWORK_ID }}
+            auth_token: ${{ secrets.ZEROTIER_CENTRAL_TOKEN }}
+
+      - name: ping host
+        if: ${{ env.API_TOKEN_GITHUB != '' }}
+        shell: bash
+        run: |
+          count=10
+          while ! ping -c 1 10.147.18.11 ; do
+            echo "waiting..." ;
+            sleep 1 ;
+            let count=count-1
+          done
+          echo "ping success"
+
+      - name: copy tar to target host
+        if: ${{ env.API_TOKEN_GITHUB != '' }}
+        shell: bash
+        run: |
+          sshpass -p "${{ secrets.ssh_password }}" scp -r -o StrictHostKeyChecking=no -P 22 ./dist/*.gz root@10.147.18.11:/var/www/download
+          echo "ping success"
+#       - name: send message
+#         run: |
+#           curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"text","content":{"text":"NoxOS-AppManagement updated"}}' ${{ secrets.SSH_ROBOT_URL }}
+      - name: Error Handling
+        if: ${{ failure() && env.SSH_ROBOT_URL != '' }}
+        run: |
+          curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"text","content":{"text":"NoxOS-AppManagement push Error"}}' "${SSH_ROBOT_URL}" 

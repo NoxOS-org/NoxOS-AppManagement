@@ -1,0 +1,17 @@
+name: Sync OpenAPI
+
+on:
+  workflow_call:
+    inputs:
+      project-name:
+        required: true
+        type: string
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync is managed externally
+        run: |
+          echo "Skipping local sync_openapi job."
+          echo "Use the org-level automation once Nox-OS/github reusable workflows are available."
