@@ -104,7 +104,7 @@ func (a *ComposeApp) AuthorType() codegen.StoreAppAuthorType {
 		return codegen.Official
 	}
 	if strings.EqualFold(storeInfo.Author, common.ComposeAppAuthorNoxOSTeam) {
-		return codegen.ByCasaos
+		return codegen.ByNoxos
 	}
 
 	return codegen.Community

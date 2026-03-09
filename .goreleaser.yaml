@@ -282,6 +282,6 @@ release:
     owner: NoxOS-org
     name: NoxOS-AppManagement
   draft: false
-  prerelease: auto
+  prerelease: false
   mode: replace
   name_template: "v{{ .Version }}"
