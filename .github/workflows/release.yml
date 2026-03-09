@@ -23,7 +23,7 @@ jobs:
             gcc-riscv64-linux-gnu libc6-dev-riscv64-cross
           sudo apt-get --no-install-recommends --yes install upx-ucl || \
             sudo apt-get --no-install-recommends --yes install upx
-
+            
       - name: Checkout
         uses: actions/checkout@v4
         with:
