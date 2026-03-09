@@ -17,7 +17,22 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get --no-install-recommends --yes install \
+<<<<<<< ours
+<<<<<<< ours
+<<<<<<< ours
+<<<<<<< ours
+<<<<<<< ours
 
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
             libc6-dev-amd64-cross \
             gcc-aarch64-linux-gnu libc6-dev-arm64-cross \
             gcc-arm-linux-gnueabihf libc6-dev-armhf-cross \
@@ -25,7 +40,22 @@ jobs:
           sudo apt-get --no-install-recommends --yes install upx-ucl || \
             sudo apt-get --no-install-recommends --yes install upx
 
+<<<<<<< ours
+<<<<<<< ours
+<<<<<<< ours
+<<<<<<< ours
+<<<<<<< ours
 
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
+=======
+>>>>>>> theirs
       - name: Checkout
         uses: actions/checkout@v4
         with:
