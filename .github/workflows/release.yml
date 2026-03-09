@@ -12,27 +12,14 @@ permissions:
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
+    env:
+      OSS_KEY_ID: ${{ secrets.OSS_KEY_ID }}
+      OSS_KEY_SECRET: ${{ secrets.OSS_KEY_SECRET }}
     steps:
       - name: Install cross-compilation toolchain
         run: |
           sudo apt-get update
           sudo apt-get --no-install-recommends --yes install \
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
             libc6-dev-amd64-cross \
             gcc-aarch64-linux-gnu libc6-dev-arm64-cross \
             gcc-arm-linux-gnueabihf libc6-dev-armhf-cross \
@@ -40,42 +27,45 @@ jobs:
           sudo apt-get --no-install-recommends --yes install upx-ucl || \
             sudo apt-get --no-install-recommends --yes install upx
 
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          path: NoxOS-AppManagement
+
+      - name: Checkout NoxOS-MessageBus (for openapi spec)
+        uses: actions/checkout@v4
+        with:
+          repository: NoxOS-org/NoxOS-MessageBus
+          path: NoxOS-MessageBus
+          sparse-checkout: api/message_bus
+          sparse-checkout-cone-mode: false
 
       - name: Fetch all tags
+        working-directory: NoxOS-AppManagement
         run: git fetch --force --tags
+
+      - name: Get version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: go.mod
+          go-version-file: NoxOS-AppManagement/go.mod
+
+      - name: Generate API code
+        working-directory: NoxOS-AppManagement
+        run: go generate ./...
 
       - name: Run GoReleaser (tag release)
         if: startsWith(github.ref, 'refs/tags/')
         uses: goreleaser/goreleaser-action@v5
         with:
           distribution: goreleaser
-          version: latest
+          version: "~> v2"
           args: release --clean
+          workdir: NoxOS-AppManagement
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -84,7 +74,24 @@ jobs:
         uses: goreleaser/goreleaser-action@v5
         with:
           distribution: goreleaser
-          version: latest
+          version: "~> v2"
           args: release --snapshot --clean
+          workdir: NoxOS-AppManagement
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload to oss
+        if: startsWith(github.ref, 'refs/tags/') && env.OSS_KEY_ID != '' && env.OSS_KEY_SECRET != ''
+        id: upload_to_oss
+        uses: tvrcgo/upload-to-oss@master
+        with:
+          key-id: ${{ secrets.OSS_KEY_ID }}
+          key-secret: ${{ secrets.OSS_KEY_SECRET }}
+          region: oss-cn-shanghai
+          bucket: noxos
+          assets: |
+            dist/checksums.txt:/NoxOS-org/NoxOS-AppManagement/releases/download/${{ steps.get_version.outputs.VERSION }}/checksums.txt
+
+      - name: Skip OSS upload notice
+        if: startsWith(github.ref, 'refs/tags/') && (env.OSS_KEY_ID == '' || env.OSS_KEY_SECRET == '')
+        run: echo "OSS_KEY_ID/OSS_KEY_SECRET are not set, skipping OSS upload."
